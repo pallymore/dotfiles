@@ -1,0 +1,9 @@
+/*jslint browser: true, regexp: true */
+/*jslint indent: 2 */
+/*jslint sloppy: true */
+/*jslint nomen: true */
+/*jslint plusplus: true */
+/*global jQuery, $, Backbone, Underscore, _, moment */
+/*global describe, it, expect, beforeEach */
+/*global App, tinyMCE, initRTE, findRTEBySelector */
+
