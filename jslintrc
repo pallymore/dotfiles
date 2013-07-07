@@ -3,7 +3,8 @@
 /*jslint sloppy: true */
 /*jslint nomen: true */
 /*jslint plusplus: true */
+/*global window, alert, console */
 /*global jQuery, $, Backbone, Underscore, _, moment */
-/*global describe, it, expect, beforeEach */
+/*global describe, it, expect, beforeEach, afterEach, sinon */
 /*global App, tinyMCE, initRTE, findRTEBySelector */
 
