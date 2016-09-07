@@ -4,34 +4,41 @@ filetype off                   " required!
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
-Bundle 'gmarik/vundle'
-Bundle 'mileszs/ack.vim'
-Bundle 'ervandew/supertab'
-Bundle 'tpope/vim-cucumber'
-Bundle 'ajf/puppet-vim'
-Bundle 'pthrasher/conqueterm-vim'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-git'
-Bundle 'tpope/vim-haml'
-Bundle 'pangloss/vim-javascript'
-Bundle 'briancollins/vim-jst'
-Bundle 'scrooloose/nerdtree'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'tpope/vim-rails'
-Bundle 'taq/vim-rspec'
-Bundle 'skwp/vim-ruby-conque'
-Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-endwise'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'scrooloose/syntastic'
-Bundle 'mattn/gist-vim'
-Bundle 'kien/ctrlp.vim'
-Bundle 'juvenn/mustache.vim'
-Bundle 'tpope/vim-commentary'
-Bundle 'mattn/webapi-vim'
-Bundle 'ap/vim-css-color'
-Bundle 'FuDesign2008/jslint.vim'
-
+Plugin 'gmarik/vundle'
+Plugin 'mileszs/ack.vim'
+Plugin 'ervandew/supertab'
+Plugin 'tpope/vim-cucumber'
+Plugin 'ajf/puppet-vim'
+Plugin 'pthrasher/conqueterm-vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-git'
+Plugin 'scrooloose/nerdtree'
+Plugin 'pallymore/vim-ruby-conque'
+Plugin 'Keithbsmiley/rspec.vim'
+Plugin 'tpope/vim-markdown'
+Plugin 'tpope/vim-endwise'
+Plugin 'scrooloose/syntastic'
+Plugin 'mattn/gist-vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'juvenn/mustache.vim'
+Plugin 'tpope/vim-commentary'
+Plugin 'mattn/webapi-vim'
+Plugin 'ap/vim-css-color'
+Plugin 'mattn/emmet-vim'
+Plugin 'FelikZ/ctrlp-py-matcher'
+Plugin 'groenewege/vim-less'
+Plugin 'vim-scripts/stata.vim'
+Plugin 'slim-template/vim-slim'
+Plugin 'digitaltoad/vim-jade'
+Plugin 'elzr/vim-json'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-haml'
+Plugin 'pangloss/vim-javascript'
+Plugin 'briancollins/vim-jst'
+Plugin 'mxw/vim-jsx'
+Plugin 'gcorne/vim-sass-lint'
 
 set number
 syntax on
@@ -57,6 +64,7 @@ set smartcase
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+set wildignore+=*/node_modules/*,*/bower_components/*
 
 " Status bar
 set laststatus=2
@@ -67,6 +75,10 @@ let g:cssColorVimDoNotMessMyUpdatetime = 1
 " NERDTree configuration
 let NERDTreeIgnore=['\.pyc$', '\.rbc$', '\~$']
 map <Leader>n :NERDTreeToggle<CR>
+
+" Commentary
+map \\ gc
+map \\\ gcc
 
 " Remember last location in file
 if has("autocmd")
@@ -80,18 +92,22 @@ nmap <silent> <D-R> :call RunRspecCurrentFileConque()<CR>
 " Cmd-Shift-L for RSpec Current Line
 nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
 " ,Cmd-R for Last conque command
-" nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
+nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
 
+" default font-size to 20
+set guifont=Source\ Code\ Pro:h14
 
 " CTags
 map <Leader>rt :!/usr/local/bin/ctags --extra=+f -R *<CR><CR>
 map <C-\> :tnext<CR>
 
-function s:setupWrapping()
-  set wrap
-  set wrapmargin=2
-  set textwidth=72
-endfunction
+if !exists("*s:setupWrapping")
+  function s:setupWrapping()
+    set wrap
+    set wrapmargin=2
+    set textwidth=72
+  endfunction
+endif
 
 " make uses real tabs
 au FileType make set noexpandtab
@@ -103,7 +119,7 @@ au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru,Guardfile
 au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupWrapping()
 
 " add json syntax highlighting
-au BufNewFile,BufRead *.json set ft=javascript
+au BufNewFile,BufRead *.json set ft=json
 au BufRead,BufNewFile *.txt call s:setupWrapping()
 
 " Mustache configuration
@@ -131,8 +147,22 @@ let g:gist_detect_filetype = 1
 let g:gist_open_browser_after_post = 1
 
 " Enable syntastic syntax checking
-let g:syntastic_enable_signs=1
-let g:syntastic_quiet_warnings=1
+let g:syntastic_enable_signs = 1
+let g:syntastic_quiet_messages = {'level' : ''}
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_ruby_checkers = ['mri', 'rubocop']
+let g:syntastic_mode_map={ 'mode': 'active',
+                     \ 'active_filetypes': [],
+                     \ 'passive_filetypes': ['html'] }
+" let g:syntastic_scss_checkers = ['scss_lint']
+let g:syntastic_sass_checkers=["sass_lint"]
+let g:syntastic_scss_checkers=["sass_lint"]
+let g:syntastic_javascript_checkers = ['standard', 'eslint']
+let g:syntastic_json_checkers = ['jsonlint']
+
+" use ag in ack.vim for faster search
+let g:ackprg = 'ag --nogroup --nocolor --column'
 
 " Use modeline overrides
 set modeline
@@ -145,8 +175,6 @@ color railscasts
 
 " Show (partial) command in the status line
 set showcmd
-" Turn off jslint errors by default
-let g:JSLintHighlightErrorLine = 0
 
 " MacVIM shift+arrow-keys behavior (required in .vimrc)
 let macvim_hig_shift_movement = 1
@@ -181,9 +209,18 @@ let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
 "spell check when writing commit logs
 autocmd filetype svn,*commit* set spell
 
+let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+      \ --ignore .git
+      \ --ignore .svn
+      \ --ignore .hg
+      \ --ignore .sass-cache
+      \ --ignore .node_modules
+      \ --ignore .bower_components
+      \ --ignore .DS_Store
+      \ --ignore "**/*.pyc"
+      \ -g ""'
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\',
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.sass-cache$\|node_modules$\|bower_components$',
   \ 'file': '\.exe$\|\.so$\|\.dll$',
-  \ 'link': 'some_bad_symbolic_links',
   \ }
-
