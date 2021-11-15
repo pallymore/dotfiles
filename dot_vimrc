@@ -1,0 +1,515 @@
+set nocompatible               " be iMproved
+filetype off                   " required!
+
+" this number is in kb. max is 2000000
+set maxmempattern=2000000
+
+call plug#begin(stdpath('data'))
+Plug 'mileszs/ack.vim'                              " for searching files - needs to install Ag
+Plug 'tpope/vim-fugitive'                           " great git support (git wrapper)
+Plug 'tpope/vim-commentary'                         " comment / uncomment code
+Plug 'tpope/vim-rails'                              " rails support
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }   " language server, linting, etc.
+Plug 'vim-airline/vim-airline'                      " status bar
+Plug 'vim-airline/vim-airline-themes'               " status bar themes
+Plug 'yggdroot/indentline'                          " display line indentations
+Plug 'sheerun/vim-polyglot', { 'branch': 'master' } " syntax support for many programming languages
+Plug 'neoclide/jsonc.vim'                           " syntax support for jsonc - json with comments
+Plug 'vim-test/vim-test'                            " run tests directly!
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " fuzzy finder
+Plug 'junegunn/fzf.vim'                             " fuzzy finder
+Plug 'kamykn/spelunker.vim'                         " spellchecker
+Plug 'psliwka/vim-smoothie'                         " Smooth scrolling
+Plug 'mhinz/vim-startify'                           " interesting start screen for vim
+Plug 'airblade/vim-gitgutter'                       " displays git changed lines in a buffer
+Plug 'chriskempson/base16-vim'
+Plug 'bluz71/vim-nightfly-guicolors'
+
+
+" nvim 0.5 plugs
+Plug 'romgrk/barbar.nvim'                         " https://github.com/romgrk/barbar.nvim NEED NVIM 0.5
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'JoosepAlviste/nvim-ts-context-commentstring'  " make comments context aware in TS
+" Plug 'navarasu/onedark.nvim'
+Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'kyazdani42/nvim-tree.lua'
+call plug#end()
+
+"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (has("nvim"))
+  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+endif
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+if (has("termguicolors"))
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+set number
+syntax on
+set autoread " Automatically reload changes if detected
+set ruler
+set encoding=utf8
+
+" Whitespace stuff
+set nowrap
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+" set list listchars=tab:\ \ ,trail:·,eol:⏎
+set list listchars=tab:\ \ ,trail:·
+
+" Searching
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" open splits bottom and right
+set splitbelow
+set splitright
+
+" only highlight 2048 lines to improve performance for large files
+set synmaxcol=2048
+
+" Set color scheme
+" colorscheme base16-onedark
+let g:nightflyTransparent = 1
+colorscheme nightfly
+" let g:onedark_style = 'cool'
+" colorscheme onedark
+
+" Status Bar Theme
+let g:airline#extensions#hunks#enabled=0 " don't show git change counts in status bar
+let g:airline#extensions#branch#format = 1 " only show tail of the branch's name, e.g. feature/AB#223 => AB#223
+let g:airline_theme='nightfly'
+
+" fzf mappings , ctrl-p
+" let $FZF_DEFAULT_COMMAND = 'Ag -g ""'
+nnoremap <c-p> :GFiles<cr>
+nnoremap <C-S-p> :<C-u>FZF<CR>
+
+" Give more space for displaying messages.
+set cmdheight=2
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable delays and poor user experience.
+set updatetime=100
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+" Always show single column
+if has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  " set signcolumn=yes
+  set signcolumn=yes:1
+endif
+
+" Coc Configs
+" Uses FNM's node version
+let g:coc_node_path = '/home/yrzhang/.fnm/node-versions/v14.17.3/installation/bin/node'
+" enable tsserver globally
+let g:coc_global_extensions = [
+  \ 'coc-tsserver'
+  \ ]
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
+  let g:coc_global_extensions += ['coc-prettier']
+endif
+" setup prettier command
+command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" function to show coc documentation
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Show documentation on hover
+function! ShowDocIfNoDiagnostic(timer_id)
+  if (coc#float#has_float() == 0)
+    silent call CocActionAsync('doHover')
+  endif
+endfunction
+function! s:show_hover_doc()
+  call timer_start(500, 'ShowDocIfNoDiagnostic')
+endfunction
+
+" gd goto definition; gy goto type definition; gr refernces
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gr <Plug>(coc-references)
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+" show all diagnostics on space key and d
+nnoremap <silent> <space>d :<C-u>CocList diagnostics<cr>
+" perform code actions
+nmap <leader>do <Plug>(coc-codeaction)
+
+" Formatters
+au FileType javascript setlocal formatprg=prettier
+au FileType javascript.jsx setlocal formatprg=prettier
+au FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+au FileType typescript.tsx setlocal formatprg=prettier\ --parser\ typescript
+au FileType scss setlocal formatprg=prettier\ --parser\ css
+au FileType css setlocal formatprg=prettier\ --parser\ css
+
+" Tab completion
+set wildmode=list:longest,list:full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+set wildignore+=*/node_modules/*,*/bower_components/*
+
+" Status bar
+set laststatus=2
+
+" NERDTree configuration
+" let NERDTreeShowHidden=1
+" let NERDTreeIgnore=['\.pyc$', '\.rbc$', '\~$']
+" map <Leader>n :NERDTreeToggle<CR>
+" map <Leader>f :NERDTreeToggle %<CR>
+
+" NvimTree keys
+nnoremap <Leader>f :NvimTreeToggle<CR>
+nnoremap <leader>r :NvimTreeRefresh<CR>
+nnoremap <leader>n :NvimTreeFindFile<CR>
+" nnoremap <C-n> :NvimTreeToggle<CR>
+" NvimTree Configs
+let g:nvim_tree_auto_open = 1 "0 by default, opens the tree when typing `vim $DIR` or `vim`
+let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
+let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
+let g:nvim_tree_lsp_diagnostics = 1 "0 by default, will show lsp diagnostics in the signcolumn. See :help nvim_tree_lsp_diagnostics
+
+" Commentary
+map \\ gc
+map \\\ gcc
+
+" Key mappings for spec-finders
+" Cmd-Shift-R for RSpec
+nmap <silent> <D-R> :call RunRspecCurrentFileConque()<CR>
+" Cmd-Shift-L for RSpec Current Line
+nmap <silent> <D-L> :call RunRspecCurrentLineConque()<CR>
+" ,Cmd-R for Last conque command
+nmap <silent> ,<D-R> :call RunLastConqueCommand()<CR>
+
+" CTags
+map <Leader>rt :!/usr/local/bin/ctags --extra=+f -R *<CR><CR>
+map <C-\> :tnext<CR>
+
+if !exists("*s:setupWrapping")
+  function s:setupWrapping()
+    set wrap
+    set wrapmargin=2
+    set textwidth=72
+  endfunction
+endif
+
+" make uses real tabs
+au FileType make set noexpandtab
+
+" Thorfile, Rakefile, Vagrantfile and Gemfile are Ruby
+au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru,Guardfile}    set ft=ruby
+"
+" md, markdown, and mk are markdown and define buffer-local preview
+au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupWrapping()
+
+" add json syntax highlighting
+" au BufNewFile,BufRead *.json set ft=json
+au BufRead,BufNewFile *.txt call s:setupWrapping()
+au BufRead,BufNewFile tsconfig.json set filetype=jsonc
+au BufRead,BufNewFile rush.json set filetype=jsonc
+au BufRead,BufNewFile command-line.json set filetype=jsonc
+
+" Mustache configuration
+au BufNewFile,BufRead *.mustache        setf mustache
+
+" Yaml Configuration
+au BufRead,BufNewFile *.{yml,yaml} set foldmethod=indent
+
+" make Python follow PEP8 ( http://www.python.org/dev/peps/pep-0008/ )
+au FileType python set softtabstop=4 tabstop=4 shiftwidth=4 textwidth=79
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+" load the plugin and indent settings for the detected filetype
+filetype plugin indent on
+
+" gist-vim defaults
+if has("mac")
+  let g:gist_clip_command = 'pbcopy'
+elseif has("unix")
+  let g:gist_clip_command = 'xclip -selection clipboard'
+endif
+let g:gist_detect_filetype = 1
+let g:gist_open_browser_after_post = 1
+
+" use ag in ack.vim for faster search
+let g:ackprg = 'ag --nogroup --nocolor --column'
+
+" Use modeline overrides
+set modeline
+set modelines=10
+
+" use system clipboard for yanking
+" set clipboard=unnamedplus
+set clipboard+=unnamedplus
+
+" use mouse (automatic)
+set mouse=a
+
+" Highlight the current line where the cursor is - can be really slow!!
+set cursorline
+
+" Show (partial) command in the status line
+set showcmd
+
+" MacVIM shift+arrow-keys behavior (required in .vimrc)
+let macvim_hig_shift_movement = 1
+
+" Patter ignore when use the completion in search file
+set wig=*.o,*.obj,*~,#*#,*.pyc,*.tar*,*.avi,*.ogg,*.mp3
+
+" No save backup by .swp
+set nowb
+set noswapfile
+set noar
+
+" Disalble folding
+" set foldmethod=syntax
+set nofoldenable
+
+let Tlist_Auto_Update = 'true'
+let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
+
+"spell check when writing commit logs
+" autocmd filetype svn,*commit* set spell
+
+" Spellcheck plugin
+set nospell " turn off default spell checker
+let g:enable_spelunker_vim = 1
+let g:enable_spelunker_vim_on_readonly = 0
+let g:spelunker_target_min_char_len = 4
+let g:spelunker_max_hi_words_each_buf = 100
+let g:spelunker_max_suggest_words = 10
+let g:spelunker_check_type = 2 " only check stuff displayed in the buffer
+" Highlight type: (default: 1)
+" 1: Highlight all types (SpellBad, SpellCap, SpellRare, SpellLocal).
+" 2: Highlight only SpellBad.
+" https://vim-jp.org/vimdoc-en/spell.html#spell-quickstart
+let g:spelunker_highlight_type = 1
+let g:spelunker_disable_uri_checking = 1
+let g:spelunker_disable_email_checking = 1
+let g:spelunker_disable_acronym_checking = 1
+let g:spelunker_disable_account_name_checking = 1
+let g:spelunker_disable_auto_group = 1
+let g:spelunker_spell_bad_group = 'SpelunkerSpellBad'
+let g:spelunker_complex_or_compound_word_group = 'SpelunkerComplexOrCompoundWord'
+augroup spelunker
+  autocmd!
+  " Setting for g:spelunker_check_type = 1:
+  autocmd BufWinEnter,BufWritePost *.vim,*.js,*.jsx,*.json,*.md,*.ts,*.tsx call spelunker#check()
+  " Setting for g:spelunker_check_type = 2:
+  autocmd CursorHold *.vim,*.js,*.jsx,*.json,*.md,*.ts,*.tsx call spelunker#check_displayed_words()
+augroup END
+highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
+highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
+
+" Ctrl-P
+" let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+"       \ --ignore .git
+"       \ --ignore .svn
+"       \ --ignore .hg
+"       \ --ignore .sass-cache
+"       \ --ignore .node_modules
+"       \ --ignore .bower_components
+"       \ --ignore .DS_Store
+"       \ --ignore "**/*.pyc"
+"       \ -g ""'
+" let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+" let g:ctrlp_custom_ignore = {
+"   \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.sass-cache$\|node_modules$\|bower_components$',
+"   \ 'file': '\.exe$\|\.so$\|\.dll$',
+"   \ }
+
+" Run a given vim command on the results of alt from a given path.
+" requires  https://github.com/uptech/alt
+" See usage below.
+function! AltCommand(path, vim_command)
+  let l:alternate = system("alt " . a:path)
+  if empty(l:alternate)
+    echo "No alternate file for " . a:path . " exists!"
+  else
+    exec a:vim_command . " " . l:alternate
+  endif
+endfunction
+
+" Find the alternate (e.g. test file) file for the current path and open it
+nnoremap <leader>t :w<cr>:call AltCommand(expand('%'), ':vsp')<cr>
+
+" vim-test key mappings
+" these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
+nmap <silent> t<C-n> :TestNearest<CR>
+nmap <silent> t<C-f> :TestFile<CR>
+nmap <silent> t<C-s> :TestSuite<CR>
+nmap <silent> t<C-l> :TestLast<CR>
+nmap <silent> t<C-g> :TestVisit<CR>
+
+" AutoCommands
+augroup vimrc_autocmd
+  autocmd!
+
+  " COC:show doc with coc on hover
+  " autocmd CursorHoldI * :call <SID>show_hover_doc()
+  " autocmd CursorHold * :call <SID>show_hover_doc()
+
+  " faster Highlighting for large files
+  autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
+  autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
+augroup END
+
+" Remember last location in file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal g'\"" | endif
+endif
+
+" FzF show Open Windows and Buffers
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>w :Windows<CR>
+
+" remap split navs
+" nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" returns all modified files of the current git repo
+" `2>/dev/null` makes the command fail quietly, so that when we are not
+" in a git repo, the list will be empty
+function! s:gitModified()
+    let files = systemlist('git ls-files -m 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
+" same as above, but show untracked files, honouring .gitignore
+function! s:gitUntracked()
+    let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
+let g:startify_lists = [
+        \ { 'type': 'files',     'header': ['   MRU']            },
+        \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
+        \ { 'type': 'sessions',  'header': ['   Sessions']       },
+        \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+        \ { 'type': function('s:gitModified'),  'header': ['   git modified']},
+        \ { 'type': function('s:gitUntracked'), 'header': ['   git untracked']},
+        \ { 'type': 'commands',  'header': ['   Commands']       },
+        \ ]
+
+" clear search highlight with Crtl + L
+nnoremap <C-L> :nohlsearch<CR><C-L>
+
+" vim-go
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+" automatically adds missing imports for Go files
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" Go syntax highlighting
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_operators = 1
+
+" Auto formatting and importing
+let g:go_fmt_autosave = 1
+let g:go_fmt_command = "goimports"
+
+" Status line types/signatures
+let g:go_auto_type_info = 1
+
+" Run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
+" Map keys for most used commands.
+" Ex: `\b` for building, `\r` for running and `\b` for running test.
+autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
+autocmd FileType go nmap <leader>r  <Plug>(go-run)
+autocmd FileType go nmap <leader>t  <Plug>(go-test)
+
+" language server key mappings
+" nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+" nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+" nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+" nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+" nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+" nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+" nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+" nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+" nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+
+" barbar key maps
+nnoremap <silent>    t, :BufferPrevious<CR>
+nnoremap <silent>    t. :BufferNext<CR>
+" Re-order to previous/next
+nnoremap <silent>    <A-<> :BufferMovePrevious<CR>
+nnoremap <silent>    <A->> :BufferMoveNext<CR>
+" Goto buffer in position...
+nnoremap <silent>    t1 :BufferGoto 1<CR>
+nnoremap <silent>    t2 :BufferGoto 2<CR>
+nnoremap <silent>    t3 :BufferGoto 3<CR>
+nnoremap <silent>    t4 :BufferGoto 4<CR>
+nnoremap <silent>    t5 :BufferGoto 5<CR>
+nnoremap <silent>    t6 :BufferGoto 6<CR>
+nnoremap <silent>    t7 :BufferGoto 7<CR>
+nnoremap <silent>    t8 :BufferGoto 8<CR>
+nnoremap <silent>    t9 :BufferLast<CR>
+" Close buffer
+nnoremap <silent>    tc :BufferClose<CR>
+" Wipeout buffer
+"                          :BufferWipeout<CR>
+" Close commands
+"                          :BufferCloseAllButCurrent<CR>
+"                          :BufferCloseBuffersLeft<CR>
+"                          :BufferCloseBuffersRight<CR>
+" Magic buffer-picking mode
+nnoremap <silent> <C-s>    :BufferPick<CR>
+" Sort automatically by...
+nnoremap <silent> <Space>bd :BufferOrderByDirectory<CR>
+nnoremap <silent> <Space>bl :BufferOrderByLanguage<CR>
+
+" disable barbar icons
+let bufferline = get(g:, 'bufferline', {})
+" let bufferline.icons = v:false
+let bufferline.icons = 'both'
+
+" copy to system clipboard
+vnoremap <leader>y "+y

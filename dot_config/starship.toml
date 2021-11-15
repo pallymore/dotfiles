@@ -1,0 +1,6 @@
+[package]
+disabled = true
+
+[directory]
+truncate_to_repo = false
+truncation_symbol = "…/"
