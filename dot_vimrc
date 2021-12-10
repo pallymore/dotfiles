@@ -8,12 +8,9 @@ call plug#begin(stdpath('data'))
 Plug 'mileszs/ack.vim'                              " for searching files - needs to install Ag
 Plug 'tpope/vim-fugitive'                           " great git support (git wrapper)
 Plug 'tpope/vim-commentary'                         " comment / uncomment code
-Plug 'tpope/vim-rails'                              " rails support
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }   " language server, linting, etc.
 Plug 'vim-airline/vim-airline'                      " status bar
 Plug 'vim-airline/vim-airline-themes'               " status bar themes
-Plug 'yggdroot/indentline'                          " display line indentations
-Plug 'sheerun/vim-polyglot', { 'branch': 'master' } " syntax support for many programming languages
 Plug 'neoclide/jsonc.vim'                           " syntax support for jsonc - json with comments
 Plug 'vim-test/vim-test'                            " run tests directly!
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " fuzzy finder
@@ -22,19 +19,22 @@ Plug 'kamykn/spelunker.vim'                         " spellchecker
 Plug 'psliwka/vim-smoothie'                         " Smooth scrolling
 Plug 'mhinz/vim-startify'                           " interesting start screen for vim
 Plug 'airblade/vim-gitgutter'                       " displays git changed lines in a buffer
-Plug 'chriskempson/base16-vim'
 Plug 'bluz71/vim-nightfly-guicolors'
 
-
-" nvim 0.5 plugs
-Plug 'romgrk/barbar.nvim'                         " https://github.com/romgrk/barbar.nvim NEED NVIM 0.5
+" nvim 0.5+ plugs
+Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'stevearc/dressing.nvim'                       " better UI for floating windows
+Plug 'romgrk/barbar.nvim'                           " https://github.com/romgrk/barbar.nvim NEED NVIM 0.5
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'JoosepAlviste/nvim-ts-context-commentstring'  " make comments context aware in TS
-" Plug 'navarasu/onedark.nvim'
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 call plug#end()
+
+" Plug 'navarasu/onedark.nvim'
+" Plug 'Mofiqul/vscode.nvim' " VS-Code like theme
+" Plug 'chriskempson/base16-vim'
 
 "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
 "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
@@ -83,6 +83,7 @@ set synmaxcol=2048
 " Set color scheme
 " colorscheme base16-onedark
 let g:nightflyTransparent = 1
+let g:nightflyCursorColor = 1
 colorscheme nightfly
 " let g:onedark_style = 'cool'
 " colorscheme onedark
