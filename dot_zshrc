@@ -1,10 +1,10 @@
-source "/home/yrzhang/.zshrc.pre-oh-my-zsh"
+# source "~/.zshrc.pre-oh-my-zsh"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/yrzhang/.oh-my-zsh"
+export ZSH="/Users/yuruiology/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -119,29 +119,28 @@ source $HOME/.cargo/env
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-eval "$(starship init zsh)"
+# starship prompt
+if type "starship" > /dev/null; then
+  eval "$(starship init zsh)"
+fi
 
-alias third-party-promote='~/.toolbox/bin/brazil-third-party-tool promote'
-alias third-party='~/.toolbox/bin/brazil-third-party-tool'
-
-alias ag="/usr/local/bin/ag"
-alias Ag="/usr/local/bin/ag"
-
-# alias nvim="~/squashfs-root/usr/bin/nvim"
-alias svim='sudo nvim -S ~/.vimrc'
-alias vim='nvim'
-alias kmw='kinit && mwinit -o -s'
-alias mw='mwinit -o'
+alias brewtime="brew update && brew upgrade && brew cleanup; brew doctor"
+alias gsl="git st & git ll"
+alias weather="curl wttr.in/NYC\?2nqF"
 alias vimup='nvim +PlugUpdate +CocUpdate .'
-alias feh='feh --scale-down --auto-zoom'
-alias byecrs='git branch | grep "CRUX" | xargs git branch -D'
+
+# requires feh
+if type "feh" > /dev/null; then
+  alias feh='feh --scale-down --auto-zoom'
+fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# fnm
-export PATH=/home/yrzhang/.fnm:$PATH
-export PATH=/home/yrzhang/squashfs-root/usr/bin:$PATH
-eval "`fnm env`"
+# requires fnm
+if type "fnm" > /dev/null; then
+  export PATH=~/.fnm:$PATH
+  eval "`fnm env`"
+fi
 
 # requires https://github.com/Peltoche/lsd
 if type "lsd" > /dev/null; then

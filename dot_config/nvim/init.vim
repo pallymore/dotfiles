@@ -1,5 +1,4 @@
-source /home/yrzhang/.vimrc
-source /home/yrzhang/.config/nvim/autoload/plug.vim
+source ~/.vimrc
 
 lua <<EOF
 require'nvim-treesitter.configs'.setup {

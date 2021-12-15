@@ -1,6 +1,6 @@
 [user]
-	name = Yurui Zhang
-	email = yuruiology@gmail.com
+  name = Yurui Zhang
+  email = yuruiology@gmail.com
 [push]
   default = simple
 [alias]
@@ -31,4 +31,4 @@
   old = red
   new = green
 [pull]
-	rebase = true
+  rebase = true
