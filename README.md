@@ -12,6 +12,8 @@ brew install chezmoi
 
 Install all the tools before applying the dotfiles.
 
+Run `brew bunlde` to install everything defined in the `~/.Brewfile`.
+
 - [iTerm2](https://iterm2.com/)
 - [Homebrew](https://brew.sh/)
 - [Git](https://github.com/git/git) `brew install git`
