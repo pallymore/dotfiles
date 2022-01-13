@@ -12,7 +12,6 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin(stdpath('data'))
-Plug 'mileszs/ack.vim'                              " for searching files - needs to install Ag
 Plug 'tpope/vim-fugitive'                           " great git support (git wrapper)
 Plug 'tpope/vim-commentary'                         " comment / uncomment code
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }   " language server, linting, etc.
@@ -22,9 +21,14 @@ Plug 'neoclide/jsonc.vim'                           " syntax support for jsonc -
 Plug 'vim-test/vim-test'                            " run tests directly!
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " fuzzy finder
 Plug 'junegunn/fzf.vim'                             " fuzzy finder
+" telescope plugins: another fuzzy finder https://github.com/nvim-telescope/telescope.nvim
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+" end-telescope
+Plug 'folke/trouble.nvim'                           " LSP diagnostics https://github.com/folke/trouble.nvim
 Plug 'kamykn/spelunker.vim'                         " spellchecker
 Plug 'psliwka/vim-smoothie'                         " Smooth scrolling
-Plug 'mhinz/vim-startify'                           " interesting start screen for vim
 Plug 'airblade/vim-gitgutter'                       " displays git changed lines in a buffer
 Plug 'bluz71/vim-nightfly-guicolors'
 
@@ -92,9 +96,15 @@ let g:airline#extensions#branch#format = 1 " only show tail of the branch's name
 let g:airline_theme='nightfly'
 
 " fzf mappings , ctrl-p
-" let $FZF_DEFAULT_COMMAND = 'Ag -g ""'
 nnoremap <c-p> :GFiles<cr>
 nnoremap <C-S-p> :<C-u>FZF<CR>
+
+" telescope mappings
+" Using Lua functions
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 
 " Give more space for displaying messages.
 set cmdheight=2
@@ -255,9 +265,6 @@ endif
 let g:gist_detect_filetype = 1
 let g:gist_open_browser_after_post = 1
 
-" use ag in ack.vim for faster search
-let g:ackprg = 'ag --nogroup --nocolor --column'
-
 " Use modeline overrides
 set modeline
 set modelines=10
@@ -355,7 +362,6 @@ function! AltCommand(path, vim_command)
     exec a:vim_command . " " . l:alternate
   endif
 endfunction
-
 " Find the alternate (e.g. test file) file for the current path and open it
 nnoremap <leader>t :w<cr>:call AltCommand(expand('%'), ':vsp')<cr>
 
@@ -502,3 +508,11 @@ nnoremap <silent> <Space>bl :BufferOrderByLanguage<CR>
 let bufferline = get(g:, 'bufferline', {})
 " let bufferline.icons = v:false
 let bufferline.icons = 'both'
+
+" trouble 
+nnoremap <leader>xx <cmd>TroubleToggle<cr>
+nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
+nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
+nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+nnoremap gR <cmd>TroubleToggle lsp_references<cr>

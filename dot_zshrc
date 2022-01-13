@@ -142,6 +142,9 @@ if type "fnm" > /dev/null; then
   eval "`fnm env`"
 fi
 
+# requires frum
+eval "$(frum init)"
+
 # requires https://github.com/Peltoche/lsd
 if type "lsd" > /dev/null; then
   alias ls=lsd
@@ -154,3 +157,13 @@ fi
 # requires https://github.com/sharkdp/bat
 export BAT_THEME=base16
 
+# brew install llvm
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+# /opt/homebrew/opt/llvm/bin/clang
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+# brew install curl
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+
+# requires https://github.com/BurntSushi/ripgrep
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden --smart-case --glob "!.git/*"'
