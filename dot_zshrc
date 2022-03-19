@@ -157,12 +157,7 @@ fi
 # requires https://github.com/sharkdp/bat
 export BAT_THEME=base16
 
-# brew install llvm
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
-# /opt/homebrew/opt/llvm/bin/clang
-export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-# brew install curl
+# -> brew install curl
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 
 # requires https://github.com/BurntSushi/ripgrep
