@@ -1,6 +1,40 @@
 source ~/.vimrc
 
+lua << EOF
+  require('neorg').setup {
+      -- Tell Neorg what modules to load
+      load = {
+          ["core.defaults"] = {}, -- Load all the default modules
+          ["core.norg.concealer"] = {}, -- Allows for use of icons
+          ["core.norg.dirman"] = { -- Manage your directories with Neorg
+              config = {
+                  workspaces = {
+                      my_workspace = "~/neorg"
+                  }
+              }
+          }
+      },
+  }
+EOF
+
 lua <<EOF
+local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
+
+parser_configs.norg_meta = {
+    install_info = {
+        url = "https://github.com/nvim-neorg/tree-sitter-norg-meta",
+        files = { "src/parser.c" },
+        branch = "main"
+    },
+}
+
+parser_configs.norg_table = {
+    install_info = {
+        url = "https://github.com/nvim-neorg/tree-sitter-norg-table",
+        files = { "src/parser.c" },
+        branch = "main"
+    },
+}
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   -- ignore_install = {  }, -- List of parsers to ignore installing
@@ -111,5 +145,22 @@ lua << EOF
     -- your configuration comes here
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
+  }
+EOF
+
+lua << EOF
+  require("toggleterm").setup{
+    -- https://github.com/akinsho/toggleterm.nvim
+    size = 40,
+    open_mapping = [[<c-\>]],
+    hide_numbers = true, -- hide the number column in toggleterm buffers
+    shade_terminals = true,
+    start_in_insert = true,
+    insert_mappings = true, -- whether or not the open mapping applies in insert mode
+    terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
+    persist_size = true,
+    direction = 'horizontal',
+    close_on_exit = true, -- close the terminal window when the process exits
+    shell = vim.o.shell, -- change the default shell
   }
 EOF
