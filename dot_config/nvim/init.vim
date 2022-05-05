@@ -36,7 +36,7 @@ parser_configs.norg_table = {
     },
 }
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = { "lua", "go", "typescript", "javascript", "json", "json5", "jsonc", "markdown", "tsx", "yaml", "ruby", "http", "gomod", "gowork", "dot" },
   -- ignore_install = {  }, -- List of parsers to ignore installing
   highlight = {
     enable = true,              -- false will disable the whole extension
@@ -69,20 +69,27 @@ require'lspconfig'.cssls.setup {
 
 -- nvim-tree 
 require'nvim-tree'.setup {
+  auto_reload_on_write = true,
   disable_netrw       = true,
   hijack_netrw        = true,
   open_on_setup       = false,
   ignore_ft_on_setup  = {},
-  update_to_buf_dir   = {
+  hijack_directories  = {
     enable = true,
     auto_open = true,
   },
-  auto_close          = false,
   open_on_tab         = false,
   hijack_cursor       = false,
   update_cwd          = false,
-  diagnostics         = {
-    enabled = true,
+  diagnostics = {
+    enable = true,
+    show_on_dirs = false,
+    icons = {
+      hint = "",
+      info = "",
+      warning = "",
+      error = "",
+    },
   },
   update_focused_file = {
     enable      = false,
@@ -93,14 +100,31 @@ require'nvim-tree'.setup {
     cmd  = nil,
     args = {}
   },
+  actions = {
+    open_file = {
+      resize_window = true
+    }
+  },
   view = {
-    width = 30,
-    height = 30,
+    width = 40,
+    height = 40,
     side = 'left',
-    auto_resize = true,
     mappings = {
       custom_only = false,
       list = {}
+    }
+  },
+  renderer = {
+    indent_markers = {
+      enable = false,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
+      },
+    },
+    icons = {
+      webdev_colors = true,
     }
   }
 }

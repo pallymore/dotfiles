@@ -27,7 +27,6 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 " end-telescope
 Plug 'folke/trouble.nvim'                           " LSP diagnostics https://github.com/folke/trouble.nvim
-Plug 'kamykn/spelunker.vim'                         " spellchecker
 Plug 'psliwka/vim-smoothie'                         " Smooth scrolling
 Plug 'airblade/vim-gitgutter'                       " displays git changed lines in a buffer
 Plug 'bluz71/vim-nightfly-guicolors'
@@ -38,6 +37,7 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'stevearc/dressing.nvim'                       " better UI for floating windows
 Plug 'romgrk/barbar.nvim'                           " https://github.com/romgrk/barbar.nvim NEED NVIM 0.5
 Plug 'neovim/nvim-lspconfig'
+Plug 'folke/lsp-colors.nvim'                        " Automatically creates missing LSP diagnostics highlight groups for color schemes that don't yet support the Neovim 0.5 builtin lsp client.
 Plug 'nvim-neorg/neorg'                             " needed by treesitter https://github.com/nvim-neorg/neorg#setting-up-treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'JoosepAlviste/nvim-ts-context-commentstring'  " make comments context aware in TS
@@ -198,9 +198,7 @@ set laststatus=2
 nnoremap <Leader>f :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
-" nnoremap <C-n> :NvimTreeToggle<CR>
-" NvimTree Configs
-let g:nvim_tree_indent_markers = 1 "0 by default, this option shows indent markers when folders are open
+
 let g:nvim_tree_git_hl = 1 "0 by default, will enable file highlight for git attributes (can be used without the icons).
 
 " Commentary
@@ -280,7 +278,7 @@ vnoremap <leader>y "+y
 set mouse=a
 
 " Highlight the current line where the cursor is - can be really slow!!
-set cursorline
+set cursorline!
 
 " Show (partial) command in the status line
 set showcmd
@@ -303,55 +301,8 @@ set nofoldenable
 let Tlist_Auto_Update = 'true'
 let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
 
-"spell check when writing commit logs
-" autocmd filetype svn,*commit* set spell
-
 " Spellcheck plugin
-set nospell " turn off default spell checker
-let g:enable_spelunker_vim = 1
-let g:enable_spelunker_vim_on_readonly = 0
-let g:spelunker_target_min_char_len = 4
-let g:spelunker_max_hi_words_each_buf = 100
-let g:spelunker_max_suggest_words = 10
-let g:spelunker_check_type = 2 " only check stuff displayed in the buffer
-" Highlight type: (default: 1)
-" 1: Highlight all types (SpellBad, SpellCap, SpellRare, SpellLocal).
-" 2: Highlight only SpellBad.
-" https://vim-jp.org/vimdoc-en/spell.html#spell-quickstart
-let g:spelunker_highlight_type = 1
-let g:spelunker_disable_uri_checking = 1
-let g:spelunker_disable_email_checking = 1
-let g:spelunker_disable_acronym_checking = 1
-let g:spelunker_disable_account_name_checking = 1
-let g:spelunker_disable_auto_group = 1
-let g:spelunker_spell_bad_group = 'SpelunkerSpellBad'
-let g:spelunker_complex_or_compound_word_group = 'SpelunkerComplexOrCompoundWord'
-augroup spelunker
-  autocmd!
-  " Setting for g:spelunker_check_type = 1:
-  autocmd BufWinEnter,BufWritePost *.vim,*.js,*.jsx,*.json,*.md,*.ts,*.tsx call spelunker#check()
-  " Setting for g:spelunker_check_type = 2:
-  autocmd CursorHold *.vim,*.js,*.jsx,*.json,*.md,*.ts,*.tsx call spelunker#check_displayed_words()
-augroup END
-highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
-highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
-
-" Ctrl-P
-" let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
-"       \ --ignore .git
-"       \ --ignore .svn
-"       \ --ignore .hg
-"       \ --ignore .sass-cache
-"       \ --ignore .node_modules
-"       \ --ignore .bower_components
-"       \ --ignore .DS_Store
-"       \ --ignore "**/*.pyc"
-"       \ -g ""'
-" let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-" let g:ctrlp_custom_ignore = {
-"   \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.sass-cache$\|node_modules$\|bower_components$',
-"   \ 'file': '\.exe$\|\.so$\|\.dll$',
-"   \ }
+" set spell 
 
 " Run a given vim command on the results of alt from a given path.
 " requires  https://github.com/uptech/alt
