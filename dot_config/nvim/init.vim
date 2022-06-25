@@ -115,6 +115,7 @@ require'nvim-tree'.setup {
     }
   },
   renderer = {
+    highlight_git = true,
     indent_markers = {
       enable = false,
       icons = {
