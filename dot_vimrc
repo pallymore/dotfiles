@@ -41,8 +41,9 @@ Plug 'folke/lsp-colors.nvim'                        " Automatically creates miss
 Plug 'nvim-neorg/neorg'                             " needed by treesitter https://github.com/nvim-neorg/neorg#setting-up-treesitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'JoosepAlviste/nvim-ts-context-commentstring'  " make comments context aware in TS
-Plug 'kyazdani42/nvim-web-devicons' " for file icons
-Plug 'kyazdani42/nvim-tree.lua'
+Plug 'kyazdani42/nvim-web-devicons'                 " for file icons
+Plug 'kyazdani42/nvim-tree.lua'                     " file tree
+Plug 'lewis6991/satellite.nvim'                     " scrollbar decoration
 call plug#end()
 
 "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
