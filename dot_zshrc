@@ -162,6 +162,10 @@ if type "bat" > /dev/null; then
   export BAT_THEME=base16
 fi
 
+if type "cargo" > /dev/null; then
+  alias cargoup="cargo install $(cargo install --list | egrep '^[a-z1-9_-]+ v[0-9.]+:$' | cut -f1 -d' ')"
+fi
+
 # -> brew install curl
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 
@@ -169,3 +173,4 @@ export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden --smart-case --glob "!.git/*"'
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
