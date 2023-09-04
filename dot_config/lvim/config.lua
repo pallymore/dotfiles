@@ -58,7 +58,6 @@ lvim.builtin.which_key.mappings["t"] = {
 }
 lvim.keys.normal_mode["<space>d"] = ":TroubleToggle<cr>"
 
-
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
@@ -259,20 +258,74 @@ gopher.setup {
 lvim.keys.normal_mode["<leader>rn"] = ":Lspsaga rename<CR>"
 -- use x to mark selected files and enter to confirm
 lvim.keys.normal_mode["<leader>rna"] = ":Lspsaga rename ++project<CR>"
+-- You can pass argument ++unfocus to
+-- unfocus the show_line_diagnostics floating window
+lvim.keys.normal_mode["<leader>rl"] = ":Lspsaga show_line_diagnostics ++unfocus<CR>"
+lvim.keys.normal_mode["T"] = ":Lspsaga show_line_diagnostics ++unfocus<CR>"
+-- Show buffer diagnostics
+lvim.keys.normal_mode["<leader>rb"] = ":Lspsaga show_buf_diagnostics<CR>"
+-- Show workspace diagnostics
+lvim.keys.normal_mode["<leader>rw"] = ":Lspsaga show_workspace_diagnostics<CR>"
+-- Show cursor diagnostics
+lvim.keys.normal_mode["<leader>rc"] = ":Lspsaga show_cursor_diagnostics<CR>"
+
 
 -- Open Alt file
-vim.api.nvim_exec([[
- function! AltCommand(path, vim_command)
-   let l:alternate = system("alt " . a:path)
-   if empty(l:alternate)
-     echo "No alternate file for " . a:path . " exists!"
-   else
-     exec a:vim_command . " " . l:alternate
-   endif
- endfunction
-" Find the alternate (e.g. test file) file for the current path and open it
-  nnoremap <C-t> :w<cr>:call AltCommand(expand('%'), ':vsp')<cr>
-]], false)
+-- -- ----------------------------------------------
+-- Alternate File Switching
+-- ----------------------------------------------
+local pickers = require "telescope.pickers"
+local finders = require "telescope.finders"
+local conf = require("telescope.config").values
+
+local alternates_picker = function(alternates, opts)
+  opts = opts or {}
+  pickers.new(opts, {
+    prompt_title = "alternates",
+    finder = finders.new_table {
+      results = alternates
+    },
+    sorter = conf.generic_sorter(opts),
+  }):find()
+end
+
+local alt = function(path)
+  local function isempty(s)
+    return s == nil or s == ''
+  end
+
+  -- This is where you can configure it with CLI options so
+  -- it behaves how you want it to.
+  local alternates = vim.fn.system("/opt/homebrew/bin/alt " .. path)
+  if isempty(alternates) then
+    return nil
+  else
+    local alternates_table = {}
+    for s in alternates:gmatch("[^\r\n]+") do
+      table.insert(alternates_table, s)
+    end
+    return alternates_table
+  end
+end
+
+local alt_command = function(path, alt_handler)
+  local current_file_path = vim.fn.expand('%')
+  local alternate_file_paths = alt(current_file_path)
+  if alternate_file_paths == nil then
+    print("No alternate files found for " .. current_file_path .. "!")
+  else
+    alt_handler(current_file_path, alternate_file_paths)
+  end
+end
+
+local alt_handler = function(current_file_path, alternate_file_paths)
+  alternates_picker(alternate_file_paths)
+end
+
+vim.keymap.set('n', '<C-t>', function()
+  alt_command(vim.fn.expand('%'), alt_handler)
+end)
+-- end of Alt command
 
 -- copilot overrides - maps to Ctrl-e
 vim.g.copilot_no_tab_map = true
